@@ -39,6 +39,7 @@ app.post("/api/items", (request, response, next) => {
   // Get the request body and then add the appropriate
   // item JS object to our items array
   const incomingItem = request.body;
+  console.log("incomingitem", incomingItem);
   if (incomingItem.item) {
     id = id + 1;
     const newItem = {
@@ -94,7 +95,7 @@ app.put("/api/items/:id", (request, response, next) => {
     // We'll use the splice method, which requires
     // knowning where itemToDelete's index is within
     // the index array.
-    const itemIndex = items.indexOf(itemToDelete);
+    const itemIndex = items.indexOf(itemToComplete);
     items.splice(itemIndex, 1, itemToComplete);
     response.json(itemToComplete);
   } else {
