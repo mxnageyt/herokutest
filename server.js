@@ -19,7 +19,7 @@ const port = process.env.PORT || "8000";
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-let items = [];
+const items = [];
 let id = 0;
 
 /**
@@ -31,15 +31,11 @@ app.get("/", (request, response) => {
 });
 
 app.get("/api/items", (request, response, next) => {
-  // Return all of the todo items
   response.json(items);
 });
 
 app.post("/api/items", (request, response, next) => {
-  // Get the request body and then add the appropriate
-  // item JS object to our items array
   const incomingItem = request.body;
-  console.log("incomingitem", incomingItem);
   if (incomingItem.item) {
     id = id + 1;
     const newItem = {
@@ -54,52 +50,34 @@ app.post("/api/items", (request, response, next) => {
   }
 });
 
-app.delete("/api/items/:id", (request, response, next) => {
-  // Locate the request, which will give us the ID
-  const itemId = Number(request.params.id);
-
-  // With that ID, we'll have to go into our array and
-  // go through each object to see if it has the ID.
-  const itemToDelete = items.find((item) => {
-    return item.id === itemId;
-  });
-
-  // If it does, we delete it.
-  if (itemToDelete) {
-    // We'll use the splice method, which requires
-    // knowning where itemToDelete's index is within
-    // the index array.
-    const itemIndex = items.indexOf(itemToDelete);
-    items.splice(itemIndex, 1);
-    response.json(itemToDelete);
-  } else {
-    // If we don't see anything, return a 404.
-    response.status(404).json({ error: "ID not found" });
-  }
-});
-
 app.put("/api/items/:id", (request, response, next) => {
-  // Update the list by ID
-  // Locate the request, which will give us the ID
-  const itemId = Number(request.params.id);
-  // With that ID, we'll have to go into our array and
-  // go through each object to see if it has the ID.
-  const itemToComplete = items.find((item) => {
-    return item.id === itemId;
-  });
+  const itemID = Number(request.params.id);
+  const itemToComplete = items.find((item) => item.id === itemID);
 
   if (itemToComplete) {
-    // toggles the value
+    // toggle the value
     itemToComplete.completed = !itemToComplete.completed;
 
-    // We'll use the splice method, which requires
-    // knowning where itemToDelete's index is within
-    // the index array.
+    // replace the previous item with the item of item.id
+    // with the itemToComplete object
     const itemIndex = items.indexOf(itemToComplete);
     items.splice(itemIndex, 1, itemToComplete);
     response.json(itemToComplete);
   } else {
-    // If we don't see anything, return a 404.
+    response.status(404).json({ error: "ID not found" });
+  }
+});
+
+app.delete("/api/items/:id", (request, response, next) => {
+  const itemID = Number(request.params.id);
+  // Find the item to delete by ID
+  const itemToDelete = items.find((item) => item.id === itemID);
+
+  if (itemToDelete) {
+    const itemIndex = items.indexOf(itemToDelete);
+    items.splice(itemIndex, 1);
+    response.json(itemToDelete);
+  } else {
     response.status(404).json({ error: "ID not found" });
   }
 });
